@@ -1,12 +1,23 @@
 from itertools import permutations
+import requests
 
 def get_input(prompt):
     return input(prompt).strip().upper().split()
 
+def read_valid_words_from_github():
+    # Replace with your GitHub raw file URL
+    github_raw_url = 'https://raw.githubusercontent.com/Dysax/Wordle-solver/main/valid-wordle-words.txt'
+
+    response = requests.get(github_raw_url)
+    if response.status_code == 200:
+        valid_words = set(line.strip().upper() for line in response.text.split('\n'))
+        return valid_words
+    else:
+        print("Failed to retrieve valid words from GitHub.")
+        return set()
+
 def main():
-    # Read 5-letter words from the file
-    with open("C:\\Users\\luke1\\OneDrive\\Documents\\Wordle solver\\valid-wordle-words.txt", "r") as f:
-        valid_words = set(line.strip().upper() for line in f)
+    valid_words = read_valid_words_from_github()
 
     known_letters = get_input("Enter known letters separated by space: ")
     not_allowed = get_input("Enter not-allowed letters separated by space: ")
@@ -38,7 +49,7 @@ def main():
 
     for perm in perms:
         word = ''.join(perm)
-        
+
         if word not in valid_words:
             continue
 
